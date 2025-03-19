@@ -4,6 +4,6 @@ typedef struct{
     int N;
     int MAXNZ;
     int **JA;
-    int **AS;
+    double **AS;
 }HLL_matrix;
 #endif
