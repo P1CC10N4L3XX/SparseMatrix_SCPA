@@ -1,4 +1,5 @@
-#ifdef HLL_MATRIX_
+#ifndef HLL_MATRIX_
+#define HLL_MATRIX_
 typedef struct{
     int M;
     int N;

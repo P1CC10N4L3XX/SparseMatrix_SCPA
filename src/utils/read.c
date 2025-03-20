@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../mmio/mmio.h"
+#include "headers/read.h"
+#include "../mmio/headers/mmio.h"
+#include "../Matrix/matrix_mrkt.h"
 
-int read_matrix(char *filepath){
+struct matrix_mrkt *read_matrix(char *filepath){
     MM_typecode matcode;
     FILE *f;
     int M, N, nz;
@@ -34,4 +36,7 @@ int read_matrix(char *filepath){
         I[i]--;
         J[i]--;
     }
+    matrix_mrkt mtx = {I,J,val};
+
+    return &mtx;
 }

@@ -1,4 +1,5 @@
-#ifdef CSR_MATRIX_
+#ifndef CSR_MATRIX_
+#define CSR_MATRIX_
 
 typedef struct{
     int M;
