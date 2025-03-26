@@ -8,6 +8,7 @@ set(SRC_FILES
     src/main.c
     src/mmio/mmio.c
     src/utils/read.c
+    src/utils/CSR_utils.c
 )
 
 add_executable(project ${SRC_FILES})
