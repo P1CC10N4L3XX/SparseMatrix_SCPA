@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "../Matrix/matrix_mrkt.h"
 #include "../Matrix/CSR.h"
@@ -55,6 +56,10 @@ CSR_matrix *init_CSR_matrix(int M, int N, int *IRP, double *AS, int *JA, int NZ)
 
 
 CSR_matrix *transformMatrixToCSR(matrix_mrkt *m){
+    if(m==NULL){
+        printf("transformMatrixToCSR: Error: matrix point to NULL\n");
+    }
+    assert(m!=NULL);
 
     int *IRP = computeIRP(m);
     double *AS = computeAS(m);

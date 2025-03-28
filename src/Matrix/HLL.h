@@ -6,11 +6,12 @@ typedef struct{
     int MAXNZ;
     int **JA;
     double **AS;
-}ellpack_block;
+}ELLPACK_block;
 
 typedef struct{
     int hackSize;
-    ellpack_block **blocks;
+    int numberOfBlocks;
+    ELLPACK_block **blocks;
 }HLL_matrix;
 
 #endif

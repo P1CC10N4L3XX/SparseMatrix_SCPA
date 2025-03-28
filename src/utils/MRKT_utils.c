@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "headers/read.h"
+#include "headers/MRKT_utils.h"
 #include "../mmio/headers/mmio.h"
 #include "../Matrix/matrix_mrkt.h"
 
@@ -17,6 +17,31 @@ matrix_mrkt *init_matrix_mrkt(int *I, int *J, int M, int N, int NZ, double *val)
     mtx->val = val;
 
     return mtx;
+}
+
+matrix_mrkt *sortByRaw(matrix_mrkt *m){
+    int *I = (int *)malloc((m->NZ)*sizeof(*I));
+    int *J = (int *)malloc((m->NZ)*sizeof(*J));
+    double *val = (double *)malloc((m->NZ)*sizeof(*val));
+    int count=0;
+    for(int i=0; i<(m->M); i++){
+        for(int j=0; j<(m->NZ); j++){
+            if(m->I[j]==i){
+                I[count]=m->I[j];
+                J[count]=m->J[j];
+                val[count]=m->val[j];
+                count++;
+            }
+        }
+    }
+    free(m->I);
+    free(m->J);
+    free(m->val);
+    m->I = I;
+    m->J = J;
+    m->val = val;
+    
+    return m;
 }
 
 matrix_mrkt *read_matrix(char *filepath){
@@ -60,5 +85,5 @@ matrix_mrkt *read_matrix(char *filepath){
 
     if (f != stdin) fclose(f);
 
-    return mtx;
+    return sortByRaw(mtx);
 }
