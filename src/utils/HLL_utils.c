@@ -20,6 +20,7 @@ void freeHLLMatrix(HLL_matrix *hllMatrix){
         free(hllMatrix->blocks[i]->JA);
         free(hllMatrix->blocks[i]);
     }
+    free(hllMatrix->blocks);
     free(hllMatrix);
 }
 
@@ -148,23 +149,7 @@ ELLPACK_block *transformMatrixToELLPACK (matrix_mrkt *m){
     int MAXNZ = computeMAXNZ(m);
     int **JA = computeJA(m,MAXNZ);
     double **AS = computeAS_HLL(m, MAXNZ);
-    /*for(int i=0;i<m->M;i++){      //stampa di JA per test
-        printf("[ ");
-        for(int j=0; j<MAXNZ; j++){         
-            printf("%d ",JA[i][j]);
-        }
-        printf("]\n");
-    }*/
-
-    /*for(int i=0;i<m->M;i++){    //stampa di AS per test
-        printf("[ ");           
-        for(int j=0; j<MAXNZ; j++){
-            printf("%2.3g ",AS[i][j]);
-        }
-        printf("]\n");
-    }*/
-
-
+    
     return init_ELLPACK_Matrix(M,N,MAXNZ,JA,AS);
 }
 
@@ -173,6 +158,12 @@ HLL_matrix *init_HLL_Matrix(int hackSize, int numberOfBlocks, ELLPACK_block **el
 
     if(!hllMatrix){
         fprintf(stderr, "initHLLMatrix: Error: can't allocate memory for HLL matrix\n");
+        for(int i=0; i<numberOfBlocks; i++){
+            free(ellpackBlocks[i]->AS);
+            free(ellpackBlocks[i]->JA);
+            free(ellpackBlocks[i]);
+        }
+        free(ellpackBlocks);
         exit(EXIT_FAILURE);
     }
 
