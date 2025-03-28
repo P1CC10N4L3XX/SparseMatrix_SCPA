@@ -1,3 +1,10 @@
+/*
+    file:logging.c
+    Author: P1CC10N4L3XX
+
+    https://github.com/P1CC10N4L3XX/SparseMatrix_SCPA
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -40,14 +47,7 @@ int main(){
 
     HLL_matrix *hllMatrix = transformMatrixToHLL(mtx,HACK_SIZE);
     
-    free(mtx->I);
-    free(mtx->J);
-    free(mtx->val);
-    free(mtx);
-    free(csrMatrix->AS);
-    free(csrMatrix->IRP);
-    free(csrMatrix->JA);
-    free(csrMatrix);
-    //free(hllMatrix->blocks);
-    //free(hllMatrix);
+    freeMRKTMatrix(mtx);
+    freeCSRMatrix(csrMatrix);
+    freeHLLMatrix(hllMatrix);
 }

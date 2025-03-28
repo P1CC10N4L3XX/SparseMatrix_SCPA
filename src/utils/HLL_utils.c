@@ -1,3 +1,10 @@
+/*
+    file:logging.c
+    Author: P1CC10N4L3XX
+
+    https://github.com/P1CC10N4L3XX/SparseMatrix_SCPA
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -5,6 +12,17 @@
 #include "../Matrix/HLL.h"
 #include "../Matrix/matrix_mrkt.h"
 #include "headers/MRKT_utils.h"
+#include "headers/HLL_utils.h"
+
+void freeHLLMatrix(HLL_matrix *hllMatrix){
+    for(int i=0; i<hllMatrix->numberOfBlocks; i++){
+        free(hllMatrix->blocks[i]->AS);
+        free(hllMatrix->blocks[i]->JA);
+        free(hllMatrix->blocks[i]);
+    }
+    free(hllMatrix);
+}
+
 
 matrix_mrkt **divideInBlocks(matrix_mrkt *m, unsigned int size, int *total_blocks){
     *total_blocks = (m->M + size - 1)/size;
@@ -49,6 +67,8 @@ matrix_mrkt **divideInBlocks(matrix_mrkt *m, unsigned int size, int *total_block
         }
         blocks[i]=init_matrix_mrkt(I,J,M,N,NZ[i],val);
     }
+
+    free(NZ);
     
     return  blocks;
 
@@ -104,6 +124,24 @@ double **computeAS_HLL(matrix_mrkt *m, int MAXNZ){
     return AS;
 }
 
+ELLPACK_block *init_ELLPACK_Matrix(int M, int N,int MAXNZ,int **JA,double **AS){
+    ELLPACK_block *ellpackMatrix = malloc(sizeof(*ellpackMatrix));
+
+    if(!ellpackMatrix){
+        fprintf(stderr, "initELLPACKMatrix: Error: can't allocate memory for ELLPACK matrix");
+        exit(EXIT_FAILURE);
+    }
+
+    ellpackMatrix->M = M;
+    ellpackMatrix->N = N;
+    ellpackMatrix->AS = AS;
+    ellpackMatrix->JA = JA;
+    ellpackMatrix->MAXNZ = MAXNZ;
+
+    return ellpackMatrix;
+
+}
+
 ELLPACK_block *transformMatrixToELLPACK (matrix_mrkt *m){
     int M = m->M;
     int N = m->N;
@@ -127,10 +165,10 @@ ELLPACK_block *transformMatrixToELLPACK (matrix_mrkt *m){
     }*/
 
 
-    return initELLPACKMatrix(M,N,MAXNZ,JA,AS);
+    return init_ELLPACK_Matrix(M,N,MAXNZ,JA,AS);
 }
 
-HLL_matrix *initHLLMatrix(int hackSize, int numberOfBlocks, ELLPACK_block **ellpackBlocks){
+HLL_matrix *init_HLL_Matrix(int hackSize, int numberOfBlocks, ELLPACK_block **ellpackBlocks){
     HLL_matrix *hllMatrix = malloc(sizeof(*hllMatrix));
 
     if(!hllMatrix){
@@ -143,24 +181,6 @@ HLL_matrix *initHLLMatrix(int hackSize, int numberOfBlocks, ELLPACK_block **ellp
     hllMatrix->blocks = ellpackBlocks;
 
     return hllMatrix;
-}
-
-ELLPACK_block *initELLPACKMatrix(int M, int N,int MAXNZ,int **JA,double **AS){
-    ELLPACK_block *ellpackMatrix = malloc(sizeof(*ellpackMatrix));
-
-    if(!ellpackMatrix){
-        fprintf(stderr, "initELLPACKMatrix: Error: can't allocate memory for ELLPACK matrix");
-        exit(EXIT_FAILURE);
-    }
-
-    ellpackMatrix->M = M;
-    ellpackMatrix->N = N;
-    ellpackMatrix->AS = AS;
-    ellpackMatrix->JA = JA;
-    ellpackMatrix->MAXNZ = MAXNZ;
-
-    return ellpackMatrix;
-
 }
 
 
@@ -180,5 +200,5 @@ HLL_matrix *transformMatrixToHLL(matrix_mrkt *m,int hackSize){
     }
 
 
-    return initHLLMatrix(hackSize,numberOfBlocks,ellpackBlocks);
+    return init_HLL_Matrix(hackSize,numberOfBlocks,ellpackBlocks);
 }

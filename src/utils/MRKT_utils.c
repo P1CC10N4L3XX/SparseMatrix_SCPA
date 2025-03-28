@@ -1,3 +1,10 @@
+/*
+    file:logging.c
+    Author: P1CC10N4L3XX
+
+    https://github.com/P1CC10N4L3XX/SparseMatrix_SCPA
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -5,6 +12,12 @@
 #include "../mmio/headers/mmio.h"
 #include "../Matrix/matrix_mrkt.h"
 
+void freeMRKTMatrix(matrix_mrkt *m){
+    free(m->I);
+    free(m->J);
+    free(m->val);
+    free(m);
+}
 
 matrix_mrkt *init_matrix_mrkt(int *I, int *J, int M, int N, int NZ, double *val){
     matrix_mrkt *mtx = (matrix_mrkt *) malloc(sizeof(*mtx));

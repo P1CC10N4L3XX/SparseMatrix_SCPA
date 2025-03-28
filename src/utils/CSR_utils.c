@@ -1,3 +1,10 @@
+/*
+    file:logging.c
+    Author: P1CC10N4L3XX
+    
+    https://github.com/P1CC10N4L3XX/SparseMatrix_SCPA
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -5,6 +12,13 @@
 #include "../Matrix/matrix_mrkt.h"
 #include "../Matrix/CSR.h"
 #include "headers/CSR_utils.h"
+
+void freeCSRMatrix(CSR_matrix *csrMatrix){
+    free(csrMatrix->AS);
+    free(csrMatrix->IRP);
+    free(csrMatrix->JA);
+    free(csrMatrix);
+}
 
 int countNzInRawK(int k,int NZ, int *raws){
     int count = 0;
