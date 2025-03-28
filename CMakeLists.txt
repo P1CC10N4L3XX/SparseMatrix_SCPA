@@ -7,8 +7,9 @@ set(CMAKE_C_COMPILER gcc)
 set(SRC_FILES
     src/main.c
     src/mmio/mmio.c
-    src/utils/read.c
+    src/utils/MRKT_utils.c
     src/utils/CSR_utils.c
+    src/utils/HLL_utils.c
 )
 
 add_executable(project ${SRC_FILES})
