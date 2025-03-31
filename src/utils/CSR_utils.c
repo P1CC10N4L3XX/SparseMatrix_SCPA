@@ -13,6 +13,33 @@
 #include "../Matrix/CSR.h"
 #include "headers/CSR_utils.h"
 
+
+void printCSRMatrix(CSR_matrix *csrMatrix){
+    printf("STAMPA DELLA MATRICE CSR...\n\n");
+    int i=0;
+    int j=0;
+    char *IRP_string,*JA_string, *AS_string;
+
+    printf("M: %d\n", csrMatrix->M);
+    printf("N: %d\n",csrMatrix->N);
+    printf("NZ: %d\n",csrMatrix->NZ);
+
+    while(i<csrMatrix->M+1 || j<csrMatrix->NZ){
+        if(i<csrMatrix->M+1){
+            asprintf(&IRP_string, "%s%d ", IRP_string, csrMatrix->IRP[i]);
+        }
+        if(j<csrMatrix->NZ){
+            asprintf(&JA_string, "%s%d ",JA_string ,csrMatrix->JA[j]);
+            asprintf(&AS_string,"%s%2.3g ", AS_string, csrMatrix->AS[j]);
+        }
+        i++;
+        j++;
+    }
+    printf("IRP: [ %s]\n",IRP_string);
+    printf("JA: [ %s]\n",JA_string);
+    printf("AS: [ %s]\n",AS_string);
+}
+
 void freeCSRMatrix(CSR_matrix *csrMatrix){
     free(csrMatrix->AS);
     free(csrMatrix->IRP);
@@ -32,42 +59,23 @@ int countNzInRawK(int k,int NZ, int *raws){
 }
 
 int *computeIRP(matrix_mrkt *m){
-    int *IRP = malloc(sizeof(int)*(m->M+1));
+    int *IRP = (int *)malloc(sizeof(int)*(m->M+1));
     if(!IRP){
         fprintf(stderr,"computeIRP: Error: can't allocate memory for IRP\n");
         exit(EXIT_FAILURE);
     }
-    IRP[0] = 1;
+    IRP[0] = 0;
     for(int i=1; i<(m->M+1); i++){
         IRP[i] =  IRP[i-1] + countNzInRawK(i-1, m->NZ, m->I);
     }
     return IRP;
 }
 
-double *computeAS_CSR(matrix_mrkt *m){
-    double *AS = malloc(sizeof(*AS)*(m->NZ));
-    if(!AS){
-        fprintf(stderr, "computeAS_CSR: Error: can't allocate memory for AS\n");
-        exit(EXIT_FAILURE);
-    }
-    int count=0;
-    for(int i=0; i<(m->M); i++){
-        for(int j=0; j<(m->NZ); j++){
-            if(m->I[j]==i){
-                AS[count]=m->val[j];
-                count++;
-            }
-        }
-    }
-    return AS;
-}
-
-
 CSR_matrix *init_CSR_matrix(int M, int N, int *IRP, double *AS, int *JA, int NZ){
     
     CSR_matrix *csrMatrix = (CSR_matrix *)malloc(sizeof(*csrMatrix));
     if(!csrMatrix){
-        fprintf(stderr, "init_CSR_matrix: Error: can't allocate memory for CSR matrix");
+        fprintf(stderr, "init_CSR_matrix: Error: can't allocate memory for CSR matrix\n");
         free(IRP);
         free(AS);
         free(JA);
@@ -79,6 +87,7 @@ CSR_matrix *init_CSR_matrix(int M, int N, int *IRP, double *AS, int *JA, int NZ)
     csrMatrix->JA = JA;
     csrMatrix->M = M;
     csrMatrix->N = N;
+    csrMatrix->NZ = NZ;
 
     return csrMatrix;
 }
@@ -91,8 +100,7 @@ CSR_matrix *transformMatrixToCSR(matrix_mrkt *m){
     assert(m!=NULL);
 
     int *IRP = computeIRP(m);
-    double *AS = computeAS_CSR(m);
 
 
-    return init_CSR_matrix(m->M,m->N,IRP,AS,m->J,m->NZ);
+    return init_CSR_matrix(m->M,m->N,IRP,m->val,m->J,m->NZ);
 }

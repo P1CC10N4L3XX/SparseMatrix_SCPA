@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "headers/logging.h"
+
 const char *LOG_PATH = "../../log/logging.log";
 
 char *get_timestamp(){

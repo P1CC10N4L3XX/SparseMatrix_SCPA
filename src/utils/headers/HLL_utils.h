@@ -14,5 +14,6 @@
 HLL_matrix *transformMatrixToHLL(matrix_mrkt *m, int hackSize);
 HLL_matrix *init_HLL_matrix(int hackSize, int numberOfBlocks, ELLPACK_block **ellpackBlocks);
 void freeHLLMatrix(HLL_matrix *hllMatrix);
+void printHLLMatrix(HLL_matrix *hllMatrix);
 
 #endif

@@ -12,5 +12,6 @@
 matrix_mrkt *read_matrix(char *filepath);
 matrix_mrkt *init_matrix_mrkt(int *I, int *J, int M, int N, int NZ, double *val);
 void freeMRKTMatrix(matrix_mrkt *m);
+void printMRKTMatrix(matrix_mrkt *m);
 
 #endif
