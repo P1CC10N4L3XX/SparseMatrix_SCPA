@@ -18,7 +18,7 @@ void printCSRMatrix(CSR_matrix *csrMatrix){
     printf("STAMPA DELLA MATRICE CSR...\n\n");
     int i=0;
     int j=0;
-    char *IRP_string,*JA_string, *AS_string;
+    char *IRP_string=NULL,*JA_string=NULL, *AS_string=NULL;
 
     printf("M: %d\n", csrMatrix->M);
     printf("N: %d\n",csrMatrix->N);
@@ -26,18 +26,21 @@ void printCSRMatrix(CSR_matrix *csrMatrix){
 
     while(i<csrMatrix->M+1 || j<csrMatrix->NZ){
         if(i<csrMatrix->M+1){
-            asprintf(&IRP_string, "%s%d ", IRP_string, csrMatrix->IRP[i]);
+            asprintf(&IRP_string, "%s%d, ", (IRP_string!=NULL)? IRP_string : "", csrMatrix->IRP[i]);
         }
         if(j<csrMatrix->NZ){
-            asprintf(&JA_string, "%s%d ",JA_string ,csrMatrix->JA[j]);
-            asprintf(&AS_string,"%s%2.3g ", AS_string, csrMatrix->AS[j]);
+            asprintf(&JA_string, "%s%d, ", (JA_string!=NULL)? JA_string : "",csrMatrix->JA[j]);
+            asprintf(&AS_string,"%s%2.3g, ", (AS_string!=NULL)? AS_string : "", csrMatrix->AS[j]);
         }
         i++;
         j++;
     }
-    printf("IRP: [ %s]\n",IRP_string);
-    printf("JA: [ %s]\n",JA_string);
-    printf("AS: [ %s]\n",AS_string);
+    printf("IRP: [%s\b\b]\b\n",IRP_string);
+    printf("JA: [%s\b\b]\n",JA_string);
+    printf("AS: [%s\b\b]\b\n",AS_string);
+    free(IRP_string);
+    free(JA_string);
+    free(AS_string);
 }
 
 void freeCSRMatrix(CSR_matrix *csrMatrix){

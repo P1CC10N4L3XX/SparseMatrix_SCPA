@@ -14,7 +14,6 @@
 #include "headers/MRKT_utils.h"
 #include "headers/HLL_utils.h"
 
-#define BUFFER_SIZE 3000000
 
 void freeHLLMatrix(HLL_matrix *hllMatrix){
     for(int i=0; i<hllMatrix->numberOfBlocks; i++){
@@ -30,19 +29,21 @@ void printEllpackBlock(ELLPACK_block *ellpackBlock){
     printf("M: %d\n",ellpackBlock->M);
     printf("N: %d\n",ellpackBlock->N);
     printf("MAXNZ: %d\n",ellpackBlock->MAXNZ);
-    char JA_string[BUFFER_SIZE], AS_string[BUFFER_SIZE];
+    char *JA_string = NULL, *AS_string = NULL;
     for(int i=0;i<ellpackBlock->M;i++){
-        snprintf(JA_string,BUFFER_SIZE,"%s[",JA_string);
-        snprintf(AS_string,BUFFER_SIZE,"%s[",AS_string);
+        asprintf(&JA_string,"%s[",(JA_string!=NULL) ? JA_string : "");
+        asprintf(&AS_string,"%s[",(AS_string!=NULL) ? AS_string : "");
         for(int j=0;j<ellpackBlock->MAXNZ;j++){
-            snprintf(JA_string,BUFFER_SIZE,"%s%d ",JA_string,ellpackBlock->JA[i][j]);
-            snprintf(AS_string,BUFFER_SIZE,"%s%2.3g ",AS_string,ellpackBlock->AS[i][j]);
+            asprintf(&JA_string,"%s%d, ",JA_string,ellpackBlock->JA[i][j]);
+            asprintf(&AS_string,"%s%2.3g, ",AS_string,ellpackBlock->AS[i][j]);
         }
-        snprintf(JA_string,BUFFER_SIZE,"%s\b] ",JA_string);
-        snprintf(AS_string,BUFFER_SIZE,"%s\b] ",AS_string);
+        asprintf(&JA_string,"%s\b\b],",JA_string);
+        asprintf(&AS_string,"%s\b\b],",AS_string);
     }
     printf("JA: [%s\b]\n",JA_string);
     printf("AS: [%s\b]\n",AS_string);
+    free(JA_string);
+    free(AS_string);
 }
 
 void printHLLMatrix(HLL_matrix *hllMatrix){

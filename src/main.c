@@ -27,8 +27,11 @@ int main(){
     HLL_matrix *hllMatrix = transformMatrixToHLL(mtx,HACK_SIZE);
 
     printMRKTMatrix(mtx);
+    puts("");
     printCSRMatrix(csrMatrix);
+    puts("");
     printHLLMatrix(hllMatrix);
+    puts("");
     
     freeMRKTMatrix(mtx);
     freeCSRMatrix(csrMatrix);
