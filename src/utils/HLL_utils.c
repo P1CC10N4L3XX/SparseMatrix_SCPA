@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "../Matrix/HLL.h"
-#include "../Matrix/matrix_mrkt.h"
+#include "../models/HLL.h"
+#include "../models/matrix_mrkt.h"
 #include "headers/MRKT_utils.h"
 #include "headers/HLL_utils.h"
 

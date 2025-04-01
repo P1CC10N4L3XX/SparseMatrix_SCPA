@@ -8,10 +8,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <time.h>
 
-#include "../Matrix/matrix_mrkt.h"
-#include "../Matrix/CSR.h"
+#include "../models/matrix_mrkt.h"
+#include "../models/CSR.h"
+#include "../models/array.h"
 #include "headers/CSR_utils.h"
+#include "headers/array_utils.h"
 
 
 void printCSRMatrix(CSR_matrix *csrMatrix){
@@ -106,4 +109,33 @@ CSR_matrix *transformMatrixToCSR(matrix_mrkt *m){
 
 
     return init_CSR_matrix(m->M,m->N,IRP,m->val,m->J,m->NZ);
+}
+
+array *sequential(CSR_matrix *csrMatrix, array *arr){
+    double *v = (double *)calloc(sizeof(*v), csrMatrix->M);
+    size_t len = (size_t) csrMatrix->M;
+    clock_t start,end;
+    double time;
+    if(!v){
+        fprintf(stderr, "sequential: can't allocate memory for vector\n");
+        freeCSRMatrix(csrMatrix);
+        freeArray(arr);
+        exit(EXIT_FAILURE);
+    }
+
+    start = clock();
+
+    for(int i=0; i<len; i++){
+        for(int j=csrMatrix->IRP[i]; j<csrMatrix->IRP[i+1]; j++){
+            v[i]+=csrMatrix->AS[j]*arr->v[csrMatrix->JA[j]];
+        }
+    }
+
+    end = clock();
+
+    time = (double)(end - start) / CLOCKS_PER_SEC;
+
+    printf("FLOPS: %20.19g\n", (double)2*csrMatrix->NZ/time);
+
+    return initArray(v,len);
 }

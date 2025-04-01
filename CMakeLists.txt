@@ -10,6 +10,7 @@ set(SRC_FILES
     src/utils/MRKT_utils.c
     src/utils/CSR_utils.c
     src/utils/HLL_utils.c
+    src/utils/array_utils.c
 )
 
 add_executable(project ${SRC_FILES})

@@ -10,7 +10,7 @@
 
 #include "headers/MRKT_utils.h"
 #include "../mmio/headers/mmio.h"
-#include "../Matrix/matrix_mrkt.h"
+#include "../models/matrix_mrkt.h"
 
 void freeMRKTMatrix(matrix_mrkt *m){
     free(m->I);

@@ -9,11 +9,14 @@
 #include <stdlib.h>
 
 #include "utils/headers/MRKT_utils.h"
-#include "Matrix/matrix_mrkt.h"
-#include "Matrix/CSR.h"
-#include "Matrix/HLL.h"
+#include "models/matrix_mrkt.h"
+#include "models/CSR.h"
+#include "models/HLL.h"
+#include "models/array.h"
 #include "utils/headers/CSR_utils.h"
 #include "utils/headers/HLL_utils.h"
+#include "utils/headers/array_utils.h"
+
 
 #define HACK_SIZE 2
 
@@ -25,6 +28,8 @@ int main(){
     matrix_mrkt *mtx = read_matrix(PATH);
     CSR_matrix *csrMatrix = transformMatrixToCSR(mtx);
     HLL_matrix *hllMatrix = transformMatrixToHLL(mtx,HACK_SIZE);
+    array *arr = generateRandomArray(mtx->N);
+    array *res = sequential(csrMatrix, arr);
 
     printMRKTMatrix(mtx);
     puts("");
@@ -32,8 +37,14 @@ int main(){
     puts("");
     printHLLMatrix(hllMatrix);
     puts("");
+    printRandomArray(arr);
+    puts("");
+    printRandomArray(res);
+    puts("");
     
     freeMRKTMatrix(mtx);
     freeCSRMatrix(csrMatrix);
     freeHLLMatrix(hllMatrix);
+    freeArray(arr);
+    freeArray(res);
 }
