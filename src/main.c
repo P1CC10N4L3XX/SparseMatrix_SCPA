@@ -15,7 +15,7 @@
 #include "utils/headers/CSR_utils.h"
 #include "utils/headers/HLL_utils.h"
 
-#define HACK_SIZE 4
+#define HACK_SIZE 2
 
 
 

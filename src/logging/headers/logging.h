@@ -8,6 +8,6 @@
 #ifndef LOGGING_
 #define LOGGING_
 
-void write_log(const char *message);
+void write_log(char *message);
 
 #endif

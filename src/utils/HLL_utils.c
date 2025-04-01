@@ -51,6 +51,7 @@ void printHLLMatrix(HLL_matrix *hllMatrix){
     for(int i=0;i<hllMatrix->numberOfBlocks; i++){
         printf("Blocco %d\n",i);
         printEllpackBlock(hllMatrix->blocks[i]);
+        puts("");
     }
 }
 
@@ -86,17 +87,17 @@ matrix_mrkt **divideInBlocks(matrix_mrkt *m, unsigned int size, int *total_block
     int total=0;
     for(int i=0; i<*total_blocks; i++){
         count = 0;
-        I = malloc(sizeof(*I)*NZ[i]);
-        J = malloc(sizeof(*J)*NZ[i]);
+        I = (int *)malloc(sizeof(*I)*NZ[i]);
+        J = (int *)malloc(sizeof(*J)*NZ[i]);
         val = malloc(sizeof(*val)*NZ[i]);
         if(!I || !J || !val){
-            fprintf(stderr, "divideInBlocks: Error: can't allocate memori for I, J, val\n");
+            fprintf(stderr, "divideInBlocks: Error: can't allocate memory for I, J, val\n");
             freeMRKTMatrix(m);
             exit(EXIT_FAILURE);
         }
         total+=NZ[i];
         for(int j = (i == 0) ? 0 : NZ[i-1]; j<total; j++){
-            I[count]=m->I[j];
+            I[count]= (i == 0) ? m->I[j] : m->I[j]-size;
             J[count]=m->J[j];
             val[count]=m->val[j];
             count++;
@@ -111,8 +112,7 @@ matrix_mrkt **divideInBlocks(matrix_mrkt *m, unsigned int size, int *total_block
 }
 
 int computeMAXNZ(matrix_mrkt *m){
-    int MAXNZ=0;
-    int count=0;
+    int count,MAXNZ = 0;
     for(int i=0;i<m->M;i++){
         count=0;
         for(int j=0; j<m->NZ; j++){
@@ -126,7 +126,7 @@ int computeMAXNZ(matrix_mrkt *m){
 }
 
 int **computeJA(matrix_mrkt *m, int MAXNZ){
-    int **JA = malloc(sizeof(*JA)*m->M);
+    int **JA = (int **)malloc(sizeof(*JA)*m->M);
     if(!JA){
         fprintf(stderr,"computeJA: Error: can't allocate memory for JA\n");
         freeMRKTMatrix(m);
@@ -140,6 +140,11 @@ int **computeJA(matrix_mrkt *m, int MAXNZ){
             if(m->I[j]==i){
                 raw[count] = m->J[j];
                 count++;
+            }
+        }
+        if(count-1<MAXNZ){
+            for(int i=count-1;i<MAXNZ;i++){
+                raw[i]=raw[count-1];
             }
         }
         JA[i]=raw;
@@ -171,7 +176,7 @@ double **computeAS_HLL(matrix_mrkt *m, int MAXNZ){
 }
 
 ELLPACK_block *init_ELLPACK_Matrix(int M, int N,int MAXNZ,int **JA,double **AS){
-    ELLPACK_block *ellpackMatrix = malloc(sizeof(*ellpackMatrix));
+    ELLPACK_block *ellpackMatrix = (ELLPACK_block *)malloc(sizeof(*ellpackMatrix));
 
     if(!ellpackMatrix){
         fprintf(stderr, "initELLPACKMatrix: Error: can't allocate memory for ELLPACK matrix\n");
@@ -205,7 +210,7 @@ ELLPACK_block *transformMatrixToELLPACK (matrix_mrkt *m){
 }
 
 HLL_matrix *init_HLL_Matrix(int hackSize, int numberOfBlocks, ELLPACK_block **ellpackBlocks){
-    HLL_matrix *hllMatrix = malloc(sizeof(*hllMatrix));
+    HLL_matrix *hllMatrix = (HLL_matrix *)malloc(sizeof(*hllMatrix));
 
     if(!hllMatrix){
         fprintf(stderr, "initHLLMatrix: Error: can't allocate memory for HLL matrix\n");
@@ -235,7 +240,7 @@ HLL_matrix *transformMatrixToHLL(matrix_mrkt *m,int hackSize){
     int numberOfBlocks;
 
     matrix_mrkt **matrix_blocks= divideInBlocks(m,hackSize,&numberOfBlocks);
-    ELLPACK_block **ellpackBlocks = malloc(sizeof(*ellpackBlocks)*numberOfBlocks);
+    ELLPACK_block **ellpackBlocks = (ELLPACK_block **) malloc(sizeof(*ellpackBlocks)*numberOfBlocks);
 
     for(int i=0; i<numberOfBlocks; i++){
         ellpackBlocks[i] = transformMatrixToELLPACK(matrix_blocks[i]);
