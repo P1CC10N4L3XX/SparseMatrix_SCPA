@@ -63,50 +63,43 @@ matrix_mrkt **divideInBlocks(matrix_mrkt *m, unsigned int size, int *total_block
         fprintf(stderr,"divideInBlocks: Error: can't allocate memory\n");
         exit(EXIT_FAILURE);
     }
-    int *I,*J;
+    int *I = NULL,*J = NULL;
     int M = size;
     int N = m->N;
-    double *val;
-    int *NZ = (int *)calloc(*total_blocks,sizeof(*NZ));
-    if(!NZ){
-        fprintf(stderr, "divideInBlocks: Error: can't allocate memory\n");
-        free(blocks);
-        exit(EXIT_FAILURE);
-    }
+    int NZ = 0;
+    double *val = NULL;
 
-    int j=1;
-    for(int i=0;i<m->NZ;i++){
-        if(m->I[i]<size*j){
-            NZ[j-1]++;
-        }else{
-            NZ[j]++;
-            j++;
-        }
-    }
+
     int count=0;
-    int total=0;
-    for(int i=0; i<*total_blocks; i++){
-        count = 0;
-        I = (int *)malloc(sizeof(*I)*NZ[i]);
-        J = (int *)malloc(sizeof(*J)*NZ[i]);
-        val = malloc(sizeof(*val)*NZ[i]);
-        if(!I || !J || !val){
-            fprintf(stderr, "divideInBlocks: Error: can't allocate memory for I, J, val\n");
-            freeMRKTMatrix(m);
-            exit(EXIT_FAILURE);
-        }
-        total+=NZ[i];
-        for(int j = (i == 0) ? 0 : NZ[i-1]; j<total; j++){
-            I[count]= (i == 0) ? m->I[j] : m->I[j]-size;
-            J[count]=m->J[j];
-            val[count]=m->val[j];
+    for(int i=0;i<m->NZ;i++){
+        if(m->I[i] % size == 0 && i!=0 && m->I[i]!=0 && m->I[i]!=m->I[i-1]){
+            blocks[count] = init_matrix_mrkt(I,J,M,N,NZ,val);
+            NZ=0;
+            val = NULL;
+            I = NULL;
+            J = NULL;
+            val = NULL;
+
             count++;
         }
-        blocks[i]=init_matrix_mrkt(I,J,M,N,NZ[i],val);
+        int *temp_I =(int *) realloc(I,sizeof(int)*(NZ+1));
+        int *temp_J =(int *) realloc(J,sizeof(int)*(NZ+1));
+        double *temp_val = (double *)realloc(val, sizeof(double)*(NZ+1));
+        if(!temp_I || !temp_J){
+            fprintf(stderr,"divideInBlocks: Error: can't allocate memory\n");
+            exit(EXIT_FAILURE);
+        }
+
+        I = temp_I;
+        J = temp_J;
+        val = temp_val;
+        I[NZ] = m->I[i]%size;
+        J[NZ] = m->J[i];
+        val[NZ] = m->val[i];
+        NZ++;
     }
 
-    free(NZ);
-    
+    blocks[count] = init_matrix_mrkt(I,J,M,N,NZ,val);
     return  blocks;
 
 }
@@ -240,6 +233,8 @@ HLL_matrix *transformMatrixToHLL(matrix_mrkt *m,int hackSize){
     int numberOfBlocks;
 
     matrix_mrkt **matrix_blocks= divideInBlocks(m,hackSize,&numberOfBlocks);
+
+
     ELLPACK_block **ellpackBlocks = (ELLPACK_block **) malloc(sizeof(*ellpackBlocks)*numberOfBlocks);
 
     for(int i=0; i<numberOfBlocks; i++){
