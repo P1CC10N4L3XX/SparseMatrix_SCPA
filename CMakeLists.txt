@@ -11,6 +11,7 @@ set(SRC_FILES
     src/utils/CSR_utils.c
     src/utils/HLL_utils.c
     src/utils/array_utils.c
+    src/garbage_collector/memory_alloc.c
 )
 
 add_executable(project ${SRC_FILES})
