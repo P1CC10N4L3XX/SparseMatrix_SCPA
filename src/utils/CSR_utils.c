@@ -15,6 +15,7 @@
 #include "../models/array.h"
 #include "headers/CSR_utils.h"
 #include "headers/array_utils.h"
+#include "../garbage_collector/headers/memory_alloc.h"
 
 
 void printCSRMatrix(CSR_matrix *csrMatrix){
@@ -46,13 +47,6 @@ void printCSRMatrix(CSR_matrix *csrMatrix){
     free(AS_string);
 }
 
-void freeCSRMatrix(CSR_matrix *csrMatrix){
-    free(csrMatrix->AS);
-    free(csrMatrix->IRP);
-    free(csrMatrix->JA);
-    free(csrMatrix);
-}
-
 int countNzInRawK(int k,int NZ, int *raws){
     int count = 0;
     for(int i=0; i<NZ; i++){
@@ -65,7 +59,7 @@ int countNzInRawK(int k,int NZ, int *raws){
 }
 
 int *computeIRP(matrix_mrkt *m){
-    int *IRP = (int *)malloc(sizeof(int)*(m->M+1));
+    int *IRP = (int *)memory_alloc(sizeof(int)*(m->M+1));
     if(!IRP){
         fprintf(stderr,"computeIRP: Error: can't allocate memory for IRP\n");
         exit(EXIT_FAILURE);
@@ -79,12 +73,10 @@ int *computeIRP(matrix_mrkt *m){
 
 CSR_matrix *init_CSR_matrix(int M, int N, int *IRP, double *AS, int *JA, int NZ){
     
-    CSR_matrix *csrMatrix = (CSR_matrix *)malloc(sizeof(*csrMatrix));
+    CSR_matrix *csrMatrix = (CSR_matrix *)memory_alloc(sizeof(*csrMatrix));
     if(!csrMatrix){
         fprintf(stderr, "init_CSR_matrix: Error: can't allocate memory for CSR matrix\n");
-        free(IRP);
-        free(AS);
-        free(JA);
+        freeAll();
         exit(EXIT_FAILURE);
     }
     
@@ -102,6 +94,7 @@ CSR_matrix *init_CSR_matrix(int M, int N, int *IRP, double *AS, int *JA, int NZ)
 CSR_matrix *transformMatrixToCSR(matrix_mrkt *m){
     if(m==NULL){
         printf("transformMatrixToCSR: Error: matrix point to NULL\n");
+        freeAll();
     }
     assert(m!=NULL);
 
@@ -112,14 +105,13 @@ CSR_matrix *transformMatrixToCSR(matrix_mrkt *m){
 }
 
 array *sequential(CSR_matrix *csrMatrix, array *arr){
-    double *v = (double *)calloc(sizeof(*v), csrMatrix->M);
+    double *v = (double *)memory_calloc(sizeof(*v), csrMatrix->M);
     size_t len = (size_t) csrMatrix->M;
     clock_t start,end;
     double time;
     if(!v){
         fprintf(stderr, "sequential: can't allocate memory for vector\n");
-        freeCSRMatrix(csrMatrix);
-        freeArray(arr);
+        freeAll();
         exit(EXIT_FAILURE);
     }
 

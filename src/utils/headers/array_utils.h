@@ -15,6 +15,5 @@
 array *generateRandomArray(size_t len);
 array *initArray(double *v, size_t len);
 void printRandomArray(array *randomArray);
-void freeArray(array *arr);
 
 #endif

@@ -16,6 +16,7 @@
 #include "utils/headers/CSR_utils.h"
 #include "utils/headers/HLL_utils.h"
 #include "utils/headers/array_utils.h"
+#include "garbage_collector/headers/memory_alloc.h"
 
 
 #define HACK_SIZE 2
@@ -42,9 +43,5 @@ int main(){
     printRandomArray(res);
     puts("");
     
-    freeMRKTMatrix(mtx);
-    freeCSRMatrix(csrMatrix);
-    freeHLLMatrix(hllMatrix);
-    freeArray(arr);
-    freeArray(res);
+    freeAll();
 }

@@ -11,13 +11,7 @@
 #include "headers/MRKT_utils.h"
 #include "../mmio/headers/mmio.h"
 #include "../models/matrix_mrkt.h"
-
-void freeMRKTMatrix(matrix_mrkt *m){
-    free(m->I);
-    free(m->J);
-    free(m->val);
-    free(m);
-}
+#include "../garbage_collector/headers/memory_alloc.h"
 
 void printMRKTMatrix(matrix_mrkt *m){
     printf("STAMPA DELLA MATRICE IN FORMATO MARKET...\n\n");
@@ -28,13 +22,11 @@ void printMRKTMatrix(matrix_mrkt *m){
 }
 
 matrix_mrkt *init_matrix_mrkt(int *I, int *J, int M, int N, int NZ, double *val){
-    matrix_mrkt *mtx = (matrix_mrkt *) malloc(sizeof(*mtx));
+    matrix_mrkt *mtx = (matrix_mrkt *) memory_alloc(sizeof(*mtx));
 
     if(!mtx){
         fprintf(stderr, "init_matrix_mrkt: Error: can't allocate memory for matrix market\n");
-        free(I);
-        free(J);
-        free(val);
+        freeAll();
         exit(EXIT_FAILURE);
     }
 
@@ -49,12 +41,13 @@ matrix_mrkt *init_matrix_mrkt(int *I, int *J, int M, int N, int NZ, double *val)
 }
 
 matrix_mrkt *sortByRaw(matrix_mrkt *m){
-    int *I = (int *)malloc((m->NZ)*sizeof(*I));
-    int *J = (int *)malloc((m->NZ)*sizeof(*J));
-    double *val = (double *)malloc((m->NZ)*sizeof(*val));
+    int *I = (int *)memory_alloc((m->NZ)*sizeof(*I));
+    int *J = (int *)memory_alloc((m->NZ)*sizeof(*J));
+    double *val = (double *)memory_alloc((m->NZ)*sizeof(*val));
 
     if(!I || !J || !val){
         fprintf(stderr, "sortByRaw: Error: can't allocate memory for I,J,val\n");
+        freeAll();
         exit(EXIT_FAILURE);
     }
 
@@ -69,9 +62,6 @@ matrix_mrkt *sortByRaw(matrix_mrkt *m){
             }
         }
     }
-    free(m->I);
-    free(m->J);
-    free(m->val);
     m->I = I;
     m->J = J;
     m->val = val;
@@ -106,12 +96,13 @@ matrix_mrkt *read_matrix(char *filepath){
         exit(EXIT_FAILURE);
     }
     
-    I = (int *)malloc(nz * sizeof(int));
-    J = (int *)malloc(nz * sizeof(int));
-    val = (double *)malloc(nz * sizeof(double));
+    I = (int *)memory_alloc(nz * sizeof(int));
+    J = (int *)memory_alloc(nz * sizeof(int));
+    val = (double *)memory_alloc(nz * sizeof(double));
 
     if(!I || !J || !val){
         fprintf(stderr, "read_matrix: Error: can't allocate memory for I,J,val\n");
+        freeAll();
         exit(EXIT_FAILURE);
     }
 

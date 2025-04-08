@@ -11,12 +11,13 @@
 
 #include "headers/array_utils.h"
 #include "../models/array.h"
+#include "../garbage_collector/headers/memory_alloc.h"
 
 array *initArray(double *v, size_t len){
-    array *randomArray = (array *)malloc(sizeof(*randomArray));
+    array *randomArray = (array *)memory_alloc(sizeof(*randomArray));
     if(!randomArray){
-        free(v);
         fprintf(stderr, "initArray: Error: can't allocate memory for array\n");
+        freeAll();
         exit(EXIT_FAILURE);
     }
     randomArray->len = len;
@@ -26,9 +27,10 @@ array *initArray(double *v, size_t len){
 
 
 array *generateRandomArray(size_t len){
-    double *v =(double *) malloc(sizeof(*v) * len);
+    double *v =(double *) memory_alloc(sizeof(*v) * len);
     if(!v){
         fprintf(stderr, "generateRandomVector: Error: can't allocate memory for random vector\n");
+        freeAll();
         exit(EXIT_FAILURE);
     }
     double random_number=0;
@@ -48,9 +50,4 @@ void printRandomArray(array *randomArray){
         printf("%2.3g, ",v[i]);
     }
     printf("\b\b]\n");
-}
-
-void freeArray(array *arr){
-    free(arr->v);
-    free(arr);
 }

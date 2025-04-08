@@ -15,7 +15,6 @@
 CSR_matrix *transformMatrixToCSR(matrix_mrkt *m);
 CSR_matrix *init_CSR_matrix(int M, int N, int *IRP, double *AS, int *JA, int NZ);
 array *sequential(CSR_matrix *csrMatrix, array *arr);
-void freeCSRMatrix(CSR_matrix *csrMatrix);
 void printCSRMatrix(CSR_matrix *csrMatrix);
 
 
