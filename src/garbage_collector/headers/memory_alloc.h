@@ -1,3 +1,9 @@
+/*
+    file: memory_alloc.h
+    Author: P1CC10N4L3XX
+
+    https://github.com/P1CC10N4L3XX/SparseMatrix_SCPA
+*/
 #ifndef MEMORY_ALLOC_
 #define MEMORY_ALLOC_
 

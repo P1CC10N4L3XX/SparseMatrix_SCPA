@@ -1,3 +1,10 @@
+/*
+    file:timer.h
+    Author: P1CC10N4L3XX
+
+    https://github.com/P1CC10N4L3XX/SparseMatrix_SCPA
+*/
+
 #ifndef TIMER_
 #define TIMER_
 

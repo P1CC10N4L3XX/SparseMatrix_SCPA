@@ -1,3 +1,9 @@
+/*
+    file: memory_alloc.c
+    Author: P1CC10N4L3XX
+
+    https://github.com/P1CC10N4L3XX/SparseMatrix_SCPA
+*/
 #include <stdio.h>
 #include <stdlib.h>
 
