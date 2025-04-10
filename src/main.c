@@ -17,6 +17,7 @@
 #include "utils/headers/HLL_utils.h"
 #include "utils/headers/array_utils.h"
 #include "garbage_collector/headers/memory_alloc.h"
+#include "timer/headers/timer.h"
 
 
 #define HACK_SIZE 2
@@ -30,7 +31,8 @@ int main(){
     CSR_matrix *csrMatrix = transformMatrixToCSR(mtx);
     HLL_matrix *hllMatrix = transformMatrixToHLL(mtx,HACK_SIZE);
     array *arr = generateRandomArray(mtx->N);
-    array *res = sequential(csrMatrix, arr);
+
+    timer_result *res= measure_flops((array *(*)(void *, void *))sequential,(void *)csrMatrix,(void *)arr,csrMatrix->NZ);
 
     printMRKTMatrix(mtx);
     puts("");
@@ -40,8 +42,8 @@ int main(){
     puts("");
     printRandomArray(arr);
     puts("");
-    printRandomArray(res);
+    printRandomArray(res->res);
     puts("");
-    
+    printf("Tempo di esecuzione in flops %20.20g\n",res->time);
     freeAll();
 }
